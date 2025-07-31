@@ -3,24 +3,48 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --primary-50: #e6f7f9;
+  --primary-100: #cceff3;
+  --primary-200: #99dfe7;
+  --primary-300: #66cfdb;
+  --primary-400: #33bfcf;
+  --primary-500: #0cacbc;
+  --primary-600: #0a8a96;
+  --primary-700: #076771;
+  --primary-800: #05454b;
+  --primary-900: #022226;
 }
 
 @theme inline {
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
+/* ✅ Dark mode override */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: var(--background);
     --foreground: #ededed;
   }
 }
 
+/* ✅ Global styles using the variables */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  font-family: var(--font-sans);
 }
+ 
