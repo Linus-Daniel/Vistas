@@ -12,7 +12,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
       <Link
-        href={`/products/${product.id}`}
+        href={`/store/products/${product._id}`}
         className="block relative h-48 md:h-64 overflow-hidden"
       >
         <img
@@ -32,7 +32,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
       </Link>
       <div className="p-4">
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product._id}`}>
           <h3 className="text-sm md:text-base font-medium mb-1 hover:text-blue-600 transition">
             {product.name}
           </h3>
@@ -51,12 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
           <button
             onClick={() =>
-              addToCart({
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-              })
+              addToCart(product._id, 1)
             }
             className="text-blue-600 hover:text-blue-700"
           >

@@ -1,73 +1,102 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import CartItem from "@/components/store/CartItems";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function CartPage() {
-  const { cart, totalPrice, clearCart } = useCart();
+  const {
+    cart,
+    loading,
+    error,
+    updateQuantity,
+    removeFromCart,
+    cartCount,
+    cartTotal,
+  } = useCart();
+
+  if (loading) return <div>Loading your cart...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <ShoppingCart className="h-6 w-6" />
-            Your Cart
-          </h1>
-          <Link href="/products" className="text-blue-600 flex items-center">
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Continue Shopping
+      <h1 className="text-2xl font-bold mb-6">Your Cart ({cartCount})</h1>
+
+      {!cart || cart.items.length === 0 ? (
+        <div className="text-center py-12">
+          <h2 className="text-xl mb-4">Your cart is empty</h2>
+          <Link href="/products">
+            <Button>Continue Shopping</Button>
           </Link>
         </div>
-
-        {cart.length === 0 ? (
-          <div className="text-center py-12">
-            <ShoppingCart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <h2 className="text-xl font-medium mb-2">Your cart is empty</h2>
-            <p className="text-gray-600 mb-4">
-              Looks like you haven't added anything to your cart yet
-            </p>
-            <Link
-              href="/products"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-            >
-              Browse Products
-            </Link>
-          </div>
-        ) : (
-          <>
-            <div className="mb-6">
-              {cart.map((item) => (
-                <CartItem key={item.id} item={item} />
-              ))}
-            </div>
-
-            <div className="border-t pt-6">
-              <div className="flex justify-between items-center mb-6">
-                <button
-                  onClick={clearCart}
-                  className="text-red-500 hover:text-red-700 transition"
-                >
-                  Clear Cart
-                </button>
-                <div className="text-right">
-                  <p className="text-gray-600">Total</p>
-                  <p className="text-2xl font-bold">${totalPrice.toFixed(2)}</p>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="md:col-span-2">
+            {cart.items.map((item) => (
+              <div
+                key={item.product}
+                className="flex items-center border-b py-4 gap-4"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={80}
+                  height={80}
+                  className="rounded"
+                />
+                <div className="flex-1">
+                  <h3 className="font-medium">{item.name}</h3>
+                  <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateQuantity(item.product, Number(e.target.value))
+                    }
+                    className="border rounded p-1"
+                  >
+                    {[...Array(10).keys()].map((num) => (
+                      <option key={num + 1} value={num + 1}>
+                        {num + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeFromCart(item.product)}
+                  >
+                    Remove
+                  </Button>
                 </div>
               </div>
-
-              <Link
-                href="/store/checkout"
-                className="block w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-700 transition"
-              >
-                Proceed to Checkout
-              </Link>
+            ))}
+            <div className="flex justify-end mt-4">
+              <Button variant="destructive" onClick={() => removeFromCart()}>
+                Clear Cart
+              </Button>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+          <div className="border p-4 rounded h-fit">
+            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <div className="flex justify-between mb-2">
+              <span>Subtotal</span>
+              <span>${cartTotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between mb-2">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div className="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
+              <span>Total</span>
+              <span>${cartTotal.toFixed(2)}</span>
+            </div>
+            <Button className="w-full mt-6">Proceed to Checkout</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

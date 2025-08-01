@@ -4,8 +4,9 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import QuantitySelector from "./QuantitySelector";
 import { useCart } from "@/context/CartContext";
+import { CartProduct } from "@/types";
 
-export default function CartItem({ item }: { item: CartItem }) {
+export default function CartItem({ item }: { item: CartProduct }) {
   const { removeFromCart, updateQuantity } = useCart();
 
   return (

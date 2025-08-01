@@ -1,10 +1,22 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
-import { products } from "../../../constant";
+import api from "@/lib/axiosInstance";
 
-export default function Home() {
-  const featuredProducts = products.slice(0, 4);
+const getProducts = async ()=>{
+   try{
+    const response = await api.get("/products")
+    console.log(response.data)
+    return response.data
+   }
+   catch(error){
+    console.log(error)
+   }
+}
+
+export default async function Home() {
+  const products = await getProducts()
+
 
   return (
     <div className="bg-white">
@@ -23,7 +35,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

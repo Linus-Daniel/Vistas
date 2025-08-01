@@ -1,89 +1,187 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { useSession } from "next-auth/react";
 
-type CartItem = {
-  id: string;
+interface CartItem {
+  product: string;
   name: string;
   price: number;
   quantity: number;
   image: string;
-};
+}
 
-type CartContextType = {
-  cart: CartItem[];
-  addToCart: (product: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  clearCart: () => void;
-  totalItems: number;
-  totalPrice: number;
-};
+interface Cart {
+  _id?: string;
+  user: string;
+  items: CartItem[];
+}
+
+interface CartContextType {
+  cart: Cart | null;
+  loading: boolean;
+  error: string | null;
+  addToCart: (productId: string, quantity: number) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  removeFromCart: (productId?: string) => Promise<void>;
+  getCart: () => Promise<void>;
+  cartCount: number;
+  cartTotal: number;
+}
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+export function CartProvider({ children }: { children: ReactNode }) {
+  const { data: session, status } = useSession();
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load cart from localStorage on initial render
+  // Calculate cart count and total
+  const cartCount =
+    cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const cartTotal =
+    cart?.items.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+
+  // Fetch cart when user logs in
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+    if (status === "authenticated") {
+      getCart();
+    } else if (status === "unauthenticated") {
+      setCart(null);
     }
-  }, []);
+  }, [status]);
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  const getCart = async () => {
+    if (!session?.user?.id) return;
 
-  const addToCart = (product: Omit<CartItem, "quantity">) => {
-    setCart((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/cart");
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart");
       }
-      return [...prev, { ...product, quantity: 1 }];
-    });
+      const data = await response.json();
+      setCart(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch cart");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id);
+  const addToCart = async (productId: string, quantity: number = 1) => {
+    if (!session?.user?.id) {
+      setError("You must be logged in to add to cart");
       return;
     }
-    setCart((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add to cart");
+      }
+
+      const updatedCart = await response.json();
+      setCart(updatedCart);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add to cart");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const clearCart = () => setCart([]);
+  const updateQuantity = async (productId: string, quantity: number) => {
+    if (!session?.user?.id) {
+      setError("You must be logged in to update cart");
+      return;
+    }
 
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/cart", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update quantity");
+      }
+
+      const updatedCart = await response.json();
+      setCart(updatedCart);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update quantity"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFromCart = async (productId?: string) => {
+    if (!session?.user?.id) {
+      setError("You must be logged in to modify cart");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const url = productId ? `/api/cart?productId=${productId}` : "/api/cart";
+
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to remove item");
+      }
+
+      const result = await response.json();
+      setCart(result.cart || { items: [], user: session.user.id });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove item");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        loading,
+        error,
         addToCart,
-        removeFromCart,
         updateQuantity,
-        clearCart,
-        totalItems,
-        totalPrice,
+        removeFromCart,
+        getCart,
+        cartCount,
+        cartTotal,
       }}
     >
       {children}
@@ -93,7 +191,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;

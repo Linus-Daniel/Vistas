@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   name: string;
   email: string;
+  phone: string;
   password: string;
   avatar?: string;
   createdAt: Date;
@@ -13,12 +14,13 @@ export interface IUser extends Document {
 const UserSchema = new mongoose.Schema<IUser>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true },
   password: { type: String, required: true },
   avatar: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
-// Hash password before saving
+// Automatically hash password before save
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -27,7 +29,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-// Method to compare passwords
+// Instance method to compare password
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ) {

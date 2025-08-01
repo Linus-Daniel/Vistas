@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/store/Header";
 import BottomNav from "@/components/store/BottomNav";
 import { AuthProvider } from "@/context/AuthContext";
+import StoreProviders from "@/components/store/StoreProviders";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,14 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gray-50`}>
-        <AuthProvider>
-
-        <CartProvider>
-          <Header />
-          <main className="pb-16 md:pb-0">{children}</main>
-          <BottomNav />
-        </CartProvider>
-        </AuthProvider>
+        <StoreProviders>{children}</StoreProviders>
       </body>
     </html>
   );

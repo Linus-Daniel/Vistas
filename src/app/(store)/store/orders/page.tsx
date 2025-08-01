@@ -6,13 +6,14 @@ import Link from "next/link";
 import { ArrowLeft, Package, CheckCircle, Truck, Clock } from "lucide-react";
 
 export default function OrdersPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const router = useRouter();
 
-  if (!user) {
-    router.push("/auth");
-    return null;
+  const user = {
+    orders:[]
   }
+
+ 
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -50,7 +51,7 @@ export default function OrdersPage() {
           <h1 className="text-2xl font-bold">My Orders</h1>
         </div>
 
-        {user.orders.length === 0 ? (
+        {user?.orders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h2 className="text-xl font-medium mb-2">No orders yet</h2>
