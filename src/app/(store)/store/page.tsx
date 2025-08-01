@@ -2,12 +2,13 @@ import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
 import api from "@/lib/axiosInstance";
+import { Product } from "@/types";
 
 const getProducts = async ()=>{
    try{
     const response = await api.get("/products")
-    console.log(response.data)
-    return response.data
+    console.log(response.data) 
+    return response.data as Product[]
    }
    catch(error){
     console.log(error)
@@ -28,15 +29,15 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl md:text-2xl font-bold">Featured Products</h2>
             <Link
-              href="/products"
+              href="/store/products"
               className="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
             >
               View All
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products?.map((product) => (
+              <ProductCard key={product._id} product={product} />
             ))}
           </div>
         </div>

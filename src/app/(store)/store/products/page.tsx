@@ -1,19 +1,39 @@
+import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
-import { products } from "../../../../constant";
+import api from "@/lib/axiosInstance";
+import { Product } from "@/types";
 
-export default function ProductsPage() {
+const getProducts = async () => {
+  try {
+    const response = await api.get("/products");
+    console.log(response.data);
+    return response.data as Product[];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default async function Home() {
+  const products = await getProducts();
+
   return (
-    <div className="bg-white py-6 px-4 md:py-12 md:px-6 lg:px-12">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl md:text-2xl font-bold">All Products</h1>
+    <div className="bg-white">
+      <section
+        id="featured-products"
+        className="py-6 px-4 md:py-12 md:px-6 lg:px-12"
+      >
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center mb-6">
+      
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {products?.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import QuantitySelector from "@/components/store/QuantitySelector";
-import { Product } from "@/constant";
+import { Product } from "@/types";
 import api from "@/lib/axiosInstance";
 import { AddToCartButton } from "@/components/store/AddToCart";
 import { motion } from "framer-motion";

@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     if (!cart) cart = new Cart({ user: session.user.id, items: [] });
 
     const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item:any) => item.product.toString() === productId
     );
 
     if (existingItem) {
@@ -94,13 +94,13 @@ export async function PUT(req: Request) {
       return NextResponse.json({ message: "Cart not found" }, { status: 404 });
 
     const item = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item:any) => item.product.toString() === productId
     );
     if (!item)
       return NextResponse.json({ message: "Item not found" }, { status: 404 });
 
     if (quantity <= 0) {
-      cart.items = cart.items.filter((i) => i.product.toString() !== productId);
+      cart.items = cart.items.filter((i:any) => i.product.toString() !== productId);
     } else {
       item.quantity = quantity;
     }
@@ -132,7 +132,7 @@ export async function DELETE(req: Request) {
 
     if (productId) {
       cart.items = cart.items.filter(
-        (item) => item.product.toString() !== productId
+        (item:any) => item.product.toString() !== productId
       );
     } else {
       cart.items = []; // Clear entire cart if no productId

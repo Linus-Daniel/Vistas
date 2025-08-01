@@ -2,23 +2,26 @@
 
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import { Product } from "../../constant";
+import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import Rating from "./Rating";
+import Image from "next/image";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+    <div className="bg-white border border-primary-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
       <Link
         href={`/store/products/${product._id}`}
         className="block relative h-48 md:h-64 overflow-hidden"
       >
-        <img
+        <Image
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover"
+          width={500}
+          height={500}
+          className="w-full h-full object-contain"
         />
         {product.tags?.includes("New") && (
           <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">

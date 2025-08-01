@@ -9,7 +9,12 @@ import {
 } from "react";
 import { useSession } from "next-auth/react";
 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 interface CartItem {
+
   product: string;
   name: string;
   price: number;
@@ -76,37 +81,40 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+const addToCart = async (productId: string, quantity: number = 1) => {
+  if (!session?.user?.id) {
+    setError("You must be logged in to add to cart");
+    toast.error("You must be logged in to add to cart");
+    return;
+  }
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
-    if (!session?.user?.id) {
-      setError("You must be logged in to add to cart");
-      return;
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to add to cart");
     }
 
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId, quantity }),
-      });
+    const updatedCart = await response.json();
+    setCart(updatedCart);
+    toast.success("Item added to cart");
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Failed to add to cart";
+    setError(message);
+    toast.error(message);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add to cart");
-      }
-
-      const updatedCart = await response.json();
-      setCart(updatedCart);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add to cart");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const updateQuantity = async (productId: string, quantity: number) => {
     if (!session?.user?.id) {
@@ -141,34 +149,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const removeFromCart = async (productId?: string) => {
-    if (!session?.user?.id) {
-      setError("You must be logged in to modify cart");
-      return;
-    }
+ const removeFromCart = async (productId?: string) => {
+   if (!session?.user?.id) {
+     setError("You must be logged in to modify cart");
+     toast.error("You must be logged in to modify cart");
+     return;
+   }
 
-    setLoading(true);
-    setError(null);
-    try {
-      const url = productId ? `/api/cart?productId=${productId}` : "/api/cart";
+   setLoading(true);
+   setError(null);
+   try {
+     const url = productId ? `/api/cart?productId=${productId}` : "/api/cart";
+     const response = await fetch(url, { method: "DELETE" });
 
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
+     if (!response.ok) {
+       const errorData = await response.json();
+       throw new Error(errorData.message || "Failed to remove item");
+     }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to remove item");
-      }
+     const result = await response.json();
+     setCart(result.cart || { items: [], user: session.user.id });
+     toast.success("Item removed from cart");
+   } catch (err) {
+     const message =
+       err instanceof Error ? err.message : "Failed to remove item";
+     setError(message);
+     toast.error(message);
+   } finally {
+     setLoading(false);
+   }
+ };
 
-      const result = await response.json();
-      setCart(result.cart || { items: [], user: session.user.id });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove item");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <CartContext.Provider

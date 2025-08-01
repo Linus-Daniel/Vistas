@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const {
@@ -18,7 +19,7 @@ export default function CartPage() {
 
   if (loading) return <div>Loading your cart...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
-
+  const router = useRouter()
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Your Cart ({cartCount})</h1>
@@ -93,7 +94,7 @@ export default function CartPage() {
               <span>Total</span>
               <span>${cartTotal.toFixed(2)}</span>
             </div>
-            <Button className="w-full mt-6">Proceed to Checkout</Button>
+            <Button onClick={()=>router.push("/store/checkout")} className="w-full mt-6">Proceed to Checkout</Button>
           </div>
         </div>
       )}

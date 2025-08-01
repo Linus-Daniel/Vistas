@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     // Create order
     const order = new Order({
       user: session.user.id,
-      items: cart.items.map((item) => ({
+      items: cart.items.map((item:any) => ({
         product: item.product._id,
         name: item.name,
         price: item.price,
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
         image: item.image,
       })),
       total: cart.items.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total:number, item:any) => total + item.price * item.quantity,
         0
       ),
       status: "processing",

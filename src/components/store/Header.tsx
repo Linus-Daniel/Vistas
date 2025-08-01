@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
-  const { totalItems } = useCart();
+  const { cartCount } = useCart();
   const { user } = useAuth();
 
   return (
@@ -16,7 +16,7 @@ export default function Header() {
           {/* Left Side - Logo + Nav */}
           <div className="flex items-center space-x-6">
             <Link href="/store" className="text-xl font-bold text-blue-600">
-              ShopEasy
+              Nascomsoft Embedded Store
             </Link>
 
             {/* Navigation (hidden on mobile) */}
@@ -55,9 +55,9 @@ export default function Header() {
               aria-label="Cart"
             >
               <ShoppingCart className="h-6 w-6" />
-              {totalItems > 0 && (
+              {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {totalItems}
+                  {cartCount}
                 </span>
               )}
             </Link>
