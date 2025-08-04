@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
 
@@ -68,7 +69,9 @@ const CoursesSection = () => {
               data-aos-delay={(index + 1) * 100}
             >
               <div className="h-44 sm:h-48 overflow-hidden rounded-t-2xl">
-                <img
+                <Image
+                width={500}
+                height={500}
                   src={course.image}
                   alt={course.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"

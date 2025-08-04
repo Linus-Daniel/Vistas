@@ -6,6 +6,7 @@ export interface IProduct extends Document {
   description: string;
   image: string;
   rating?: number;
+  category:string;
   stock:number;
   reviewCount?: number;
   tags?: string[];

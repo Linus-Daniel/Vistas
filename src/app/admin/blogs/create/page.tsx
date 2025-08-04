@@ -1,30 +1,33 @@
-"use client"
-import React, { FormEvent, useState } from 'react';
-import { FaBlog, } from 'react-icons/fa6';
-import Link from 'next/link';
-import { FaSave, FaTimes } from 'react-icons/fa';
+"use client";
+import React, { FormEvent, useState, ChangeEvent } from "react";
+import { FaBlog } from "react-icons/fa6";
+import Link from "next/link";
+import { FaSave, FaTimes } from "react-icons/fa";
+import Image from "next/image";
 
 export default function CreateBlogPost() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [status, setStatus] = useState('draft');
-  const [featuredImage, setFeaturedImage] = useState(null);
-  const [tags, setTags] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [status, setStatus] = useState<"draft" | "published" | "scheduled">(
+    "draft"
+  );
+  const [featuredImage, setFeaturedImage] = useState<string | null>(null);
+  const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e:FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     // Simulate API call
     setTimeout(() => {
       console.log({ title, content, status, featuredImage, tags });
       setIsSubmitting(false);
-      alert('Blog post created successfully!');
+      alert("Blog post created successfully!");
     }, 1500);
   };
 
-  const handleImageChange = (e:FormEvent<HTMLElement>) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setFeaturedImage(URL.createObjectURL(file));
     }
@@ -46,7 +49,12 @@ export default function CreateBlogPost() {
       <div className="bg-white rounded-lg shadow p-6">
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Title
+            </label>
             <input
               type="text"
               id="title"
@@ -59,7 +67,12 @@ export default function CreateBlogPost() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+            <label
+              htmlFor="content"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Content
+            </label>
             <textarea
               id="content"
               rows={12}
@@ -73,12 +86,21 @@ export default function CreateBlogPost() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Status
+              </label>
               <select
                 id="status"
                 className="select-default"
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={(e) =>
+                  setStatus(
+                    e.target.value as "draft" | "published" | "scheduled"
+                  )
+                }
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
@@ -87,7 +109,12 @@ export default function CreateBlogPost() {
             </div>
 
             <div>
-              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+              <label
+                htmlFor="tags"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Tags
+              </label>
               <input
                 type="text"
                 id="tags"
@@ -100,11 +127,19 @@ export default function CreateBlogPost() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Featured Image
+            </label>
             <div className="mt-1 flex items-center">
               {featuredImage ? (
                 <div className="relative">
-                  <img src={featuredImage} alt="Preview" className="h-32 w-auto rounded-md" />
+                  <Image
+                  height={500}
+                  width={500}
+                    src={featuredImage}
+                    alt="Preview"
+                    className="h-32 w-auto rounded-md"
+                  />
                   <button
                     type="button"
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 -mt-2 -mr-2"
@@ -116,7 +151,9 @@ export default function CreateBlogPost() {
               ) : (
                 <label className="cursor-pointer">
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
-                    <span className="block text-sm text-gray-600">Click to upload image</span>
+                    <span className="block text-sm text-gray-600">
+                      Click to upload image
+                    </span>
                     <input
                       type="file"
                       className="hidden"
@@ -136,7 +173,7 @@ export default function CreateBlogPost() {
               disabled={isSubmitting}
             >
               <FaSave className="mr-2" />
-              {isSubmitting ? 'Saving...' : 'Save Post'}
+              {isSubmitting ? "Saving..." : "Save Post"}
             </button>
           </div>
         </form>

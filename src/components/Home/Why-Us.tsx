@@ -61,7 +61,7 @@ const WhyChooseUs = () => {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Why Choose Us</h2>
             <p className="text-gray-600 mb-8">
-              At Nascomsoft, we're committed to excellence in everything we do. Here's what sets us apart:
+              At Nascomsoft, we are committed to excellence in everything we do. Here is what sets us apart:
             </p>
 
             <div className="space-y-6">

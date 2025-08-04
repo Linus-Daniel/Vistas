@@ -1,8 +1,8 @@
 
 // Add to existing data.ts
 export interface Order {
-  id: string
-  date: string
+  _id: string
+  createdAt: string
   status: 'processing' | 'shipped' | 'delivered'
   total: number
   items: {

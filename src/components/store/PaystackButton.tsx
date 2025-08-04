@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 interface PaystackButtonProps {
   email: string;
   amount: number; // Amount in Naira
-  onSuccess: (reference: any) => void;
+  onSuccess: (reference:string) => void;
   onClose: () => void;
 }
 
@@ -28,7 +28,7 @@ export default function PaystackButton({
 
   const initializePayment = usePaystackPayment(config);
 
-  const onSuccessCallback = (reference: any) => {
+  const onSuccessCallback = (reference:string) => {
     setLoading(false);
     onSuccess(reference);
   };

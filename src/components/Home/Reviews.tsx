@@ -1,5 +1,6 @@
 import { FaQuoteLeft, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import React, { JSX } from "react";
+import Image from "next/image";
 
 interface Testimonial {
   id: number;
@@ -69,7 +70,7 @@ const Testimonials: React.FC = () => {
             What Our Clients Say
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Hear from the businesses and individuals we've helped
+            Hear from the businesses and individuals we have helped
           </p>
         </div>
 
@@ -88,10 +89,12 @@ const Testimonials: React.FC = () => {
                 {renderStars(testimonial.rating)}
               </div>
               <p className="text-gray-600 mb-6 italic">
-                "{testimonial.quote}"
+                {testimonial.quote}
               </p>
               <div className="flex items-center">
-                <img
+                <Image
+                width={500}
+                height={500}
                   src={testimonial.image}
                   alt={testimonial.name}
                   className="w-12 h-12 rounded-full mr-4"

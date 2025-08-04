@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+
 import ProductCard from "@/components/store/ProductCard";
 import api from "@/lib/axiosInstance";
 import { Product } from "@/types";

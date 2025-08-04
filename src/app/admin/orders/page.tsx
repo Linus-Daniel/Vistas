@@ -30,7 +30,7 @@ export default function Orders() {
       pending: 'bg-gray-100 text-gray-800',
     };
     return (
-      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status]}`}>
+      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status as "completed"|"shipped"|"processing"|"pending"]}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );

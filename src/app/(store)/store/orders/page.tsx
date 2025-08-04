@@ -1,20 +1,30 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, CheckCircle, Truck, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import api from "@/lib/axiosInstance";
+import { Order } from "@/constant";
+import Image from "next/image";
 
 export default function OrdersPage() {
-  // const { user } = useAuth();
+  const [orders,setOrders] = useState<Order[]>()
+  useEffect(()=>{
+   async function getOrders (){
+      try{
+        const response = await api.get("/orders")
+        const orders = response.data;
+        console.log(orders)
+        setOrders(orders)
+      }
+      catch(error){
+        console.log(error)
+      }
+    }
+    getOrders()
+  },[])
   const router = useRouter();
-
-  const user = {
-    orders:[]
-  }
-
- 
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "processing":
@@ -51,12 +61,12 @@ export default function OrdersPage() {
           <h1 className="text-2xl font-bold">My Orders</h1>
         </div>
 
-        {user?.orders.length === 0 ? (
+        {orders?.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h2 className="text-xl font-medium mb-2">No orders yet</h2>
             <p className="text-gray-600 mb-4">
-              You haven't placed any orders. Start shopping to see your orders
+              You have not  placed any orders. Start shopping to see your orders
               here.
             </p>
             <Link
@@ -68,9 +78,9 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {user.orders.map((order) => (
+            {orders?.map((order,index) => (
               <div
-                key={order.id}
+                key={index}
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
                 <div className="p-4 border-b">
@@ -87,7 +97,7 @@ export default function OrdersPage() {
                       </span>
                     </div>
                     <div className="text-sm text-gray-500">
-                      Ordered on {new Date(order.date).toLocaleDateString()}
+                      Ordered on {new Date(order.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -99,7 +109,9 @@ export default function OrdersPage() {
                       className="flex py-3 border-b last:border-b-0"
                     >
                       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
-                        <img
+                        <Image
+                        width={500}
+                        height={500}
                           src={item.image}
                           alt={item.name}
                           className="h-full w-full object-cover"
@@ -124,7 +136,7 @@ export default function OrdersPage() {
 
                 <div className="p-4 bg-gray-50 flex justify-between items-center">
                   <Link
-                    href={`/store/orders/${order.id}`}
+                    href={`/store/orders/${order._id}`}
                     className="text-sm font-medium text-blue-600 hover:text-blue-500"
                   >
                     View details

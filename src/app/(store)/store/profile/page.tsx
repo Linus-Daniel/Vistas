@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { User, Mail, LogOut } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -22,7 +23,9 @@ export default function ProfilePage() {
             <div className="flex items-center">
               <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-blue-600">
                 {user.avatar ? (
-                  <img
+                  <Image
+                  width={500}
+                  height={500}
                     src={user.avatar}
                     alt={user.name}
                     className="h-full w-full rounded-full object-cover"

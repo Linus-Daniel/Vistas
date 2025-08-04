@@ -4,10 +4,12 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+
   await dbConnect();
-  const product = await Product.findById(params.id);
+  const {id} =  await params
+  const product = await Product.findById(id);
   if (!product) {
     return NextResponse.json({ message: "Product not found" }, { status: 404 });
   }
@@ -16,11 +18,12 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
   const body = await req.json();
-  const updatedProduct = await Product.findByIdAndUpdate(params.id, body, {
+  const {id} = await params
+  const updatedProduct = await Product.findByIdAndUpdate(id, body, {
     new: true,
     runValidators: true,
   });
@@ -32,10 +35,11 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
-  const deletedProduct = await Product.findByIdAndDelete(params.id);
+  const {id} =  await params
+  const deletedProduct = await Product.findByIdAndDelete(id);
   if (!deletedProduct) {
     return NextResponse.json({ message: "Product not found" }, { status: 404 });
   }

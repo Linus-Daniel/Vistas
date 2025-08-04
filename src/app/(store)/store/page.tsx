@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
 import api from "@/lib/axiosInstance";
 import { Product } from "@/types";
+import Categories from "@/components/Categories";
 
 const getProducts = async ()=>{
    try{
@@ -26,6 +26,7 @@ export default async function Home() {
         className="py-6 px-4 md:py-12 md:px-6 lg:px-12"
       >
         <div className="container mx-auto">
+          <Categories products={products} />
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl md:text-2xl font-bold">Featured Products</h2>
             <Link

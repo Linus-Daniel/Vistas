@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const products = [
   {
@@ -72,8 +73,10 @@ const StoreSection = () => {
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300"
             >
               <div className="h-56 overflow-hidden">
-                <img
+                <Image
                   className="w-full h-full object-cover"
+                  width={500}
+                  height={500}
                   src={product.image}
                   alt={product.title}
                 />

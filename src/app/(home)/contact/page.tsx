@@ -17,10 +17,10 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                    Let's <span className="text-primary-600">Connect</span>
+                    {"Let's"} <span className="text-primary-600">Connect</span>
                   </h2>
                   <p className="text-lg text-gray-600 mb-8">
-                    Have questions about our programs or services? Reach out to our team and we'll get back to you as soon as possible.
+                    Have questions about our programs or services? Reach out to our team and we will get back to you as soon as possible.
                   </p>
                   
                   <div className="space-y-6 mb-12">

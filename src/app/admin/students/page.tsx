@@ -29,7 +29,7 @@ export default function EnrolledStudents() {
       dropped: 'bg-red-100 text-red-800',
     };
     return (
-      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status]}`}>
+      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status as "active"|"completed"|"dropped"]}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );

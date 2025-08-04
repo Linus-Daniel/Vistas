@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import {
   Home,
-  Search,
   ShoppingCart,
   Package,
   User,
@@ -20,9 +19,9 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/store/orders", label: "Products", icon: Package },
+  { href: "/store/orders", label: "Order", icon: Package },
   { href: "/store/cart", label: "Cart", icon: ShoppingCart, showBadge: true },
-  { href: "/profile", label: "Profile", icon: User },
+  { href: "/auth", label: "Profile", icon: User },
 ];
 
 export default function BottomNav() {

@@ -1,23 +1,22 @@
-"use client"
-import { AnimatePresence } from 'framer-motion';
-import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion';
-import { FaArrowRight, FaBookOpen } from 'react-icons/fa6';
-import { FaCalendarAlt } from 'react-icons/fa';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
+"use client";
+import { AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { FaArrowRight, FaBookOpen } from "react-icons/fa6";
+import { FaCalendarAlt } from "react-icons/fa";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
 type Post = {
-    id:number;
-    image:string;
-    date:string;
-    category:string;
-    title:string;
-    description:string;
-    readTime:string;
-    tags:string[]
-}
-
+  id: number;
+  image: string;
+  date: string;
+  category: string;
+  title: string;
+  description: string;
+  readTime: string;
+  tags: string[];
+};
 
 const posts = [
   {
@@ -94,18 +93,17 @@ const posts = [
   },
 ];
 
-function page() {
-    const params = useParams();
-    const id = params?.id as string;
-    const [post, setPost] = useState<Post | undefined>(undefined);
+function Page() {
+  const params = useParams();
+  const id = params?.id as string;
+  const [post, setPost] = useState<Post | undefined>(undefined);
 
-    useEffect(() => {
-      const postData = posts.find((p) => p.id === parseInt(id));
-      setPost(postData);
-    }, [id]);
+  useEffect(() => {
+    const postData = posts.find((p) => p.id === parseInt(id));
+    setPost(postData);
+  }, [id]);
 
-    if (!post) return null;
-
+  if (!post) return null;
 
   return (
     <div>
@@ -119,14 +117,11 @@ function page() {
             className="fixed inset-0 bg-white z-50 overflow-y-auto"
           >
             <div className="container mx-auto px-4 py-12 max-w-4xl">
-              <Link href={"/blogs"}
-              
-                
+              <Link
+                href={"/blogs"}
                 className="mb-8 flex items-center text-gray-500 hover:text-gray-700"
               >
                 <FaArrowRight className="rotate-180 mr-2" /> Back to all
-
-
                 articles
               </Link>
 
@@ -236,8 +231,7 @@ function example() {
                   {posts
                     .filter(
                       (blog) =>
-                        blog.category === post.category &&
-                        blog.id !== post.id
+                        blog.category === post.category && blog.id !== post.id
                     )
                     .slice(0, 2)
                     .map((blog) => (
@@ -250,7 +244,7 @@ function example() {
                           {blog.description}
                         </p>
                         <Link
-                        href={`/blogs/${blog.id}`}
+                          href={`/blogs/${blog.id}`}
                           className="text-blue-600 text-sm font-medium hover:underline flex items-center"
                         >
                           Read article <FaArrowRight className="ml-1" />
@@ -267,4 +261,4 @@ function example() {
   );
 }
 
-export default page
+export default Page;

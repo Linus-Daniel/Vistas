@@ -30,7 +30,7 @@ export default function Blogs() {
       scheduled: 'bg-blue-100 text-blue-800',
     };
     return (
-      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status]}`}>
+      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[status as "draft" |"published"|"scheduled"]}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );

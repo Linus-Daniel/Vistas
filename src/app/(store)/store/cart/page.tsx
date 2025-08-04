@@ -16,10 +16,10 @@ export default function CartPage() {
     cartCount,
     cartTotal,
   } = useCart();
+  const router = useRouter()
 
   if (loading) return <div>Loading your cart...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  const router = useRouter()
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Your Cart ({cartCount})</h1>

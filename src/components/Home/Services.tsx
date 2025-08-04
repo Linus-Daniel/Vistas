@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -60,7 +59,11 @@ const cardVariants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" },
+    transition: {
+      delay: i * 0.15,
+      duration: 0.6,
+      ease: "easeOut" as const,
+    },
   }),
 };
 
@@ -97,6 +100,8 @@ const ServicesSection = () => {
                   alt={service.title}
                   fill
                   className="object-cover"
+                  priority={index < 3} // Only prioritize first few images
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               <div className="p-6">

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export  const RecentApplications = () => (
     <div className="bg-white shadow rounded-lg">
       <div className="px-5 py-4 border-b border-gray-200 flex justify-between">
@@ -14,7 +16,7 @@ export  const RecentApplications = () => (
           <li key={idx} className="px-5 py-4 hover:bg-gray-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <img className="h-10 w-10 rounded-full" src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/${avatar}`} alt="avatar" />
+                <Image className="h-10 w-10 rounded-full" width={500} height={500} src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/${avatar}`} alt="avatar" />
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-900">{name}</p>
                   <p className="text-xs text-gray-500">{desc}</p>

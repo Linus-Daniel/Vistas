@@ -22,7 +22,7 @@ export default function UsersAndRoles() {
     return matchesSearch && matchesRole;
   });
 
-  const getRoleIcon = (role:string) => {
+  const getRoleIcon = (role:"admin"|"editor"|"author"|"contributor") => {
     const icons = {
       admin: <FaUserShield className="text-purple-500" />,
       editor: <FaUserTie className="text-blue-500" />,
@@ -42,7 +42,7 @@ export default function UsersAndRoles() {
       subscriber: 'bg-gray-100 text-gray-800',
     };
     return (
-      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClasses[role]}`}>
+      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClasses[role as "author"|"contributor"|"subscriber"|"editor"|"admin"]}`}>
         {role.charAt(0).toUpperCase() + role.slice(1)}
       </span>
     );
@@ -119,7 +119,7 @@ export default function UsersAndRoles() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <span className="mr-2">{getRoleIcon(user.role)}</span>
+                      <span className="mr-2">{getRoleIcon(user.role as any)}</span>
                       {getRoleBadge(user.role)}
                     </div>
                   </td>

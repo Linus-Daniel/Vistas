@@ -8,9 +8,6 @@ import {
   FaUserTie,
   FaLaptopCode,
   FaBriefcase,
-  FaFileAlt,
-  FaUniversity,
-  FaBuilding,
 } from "react-icons/fa";
 
 type Program = {

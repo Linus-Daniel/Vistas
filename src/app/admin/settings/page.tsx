@@ -1,50 +1,66 @@
-"use client"
-import React, { FormEvent, useState } from 'react';
-import { FaGear} from 'react-icons/fa6';
-import Link from 'next/link';
-import { FaSave, FaTimes } from 'react-icons/fa';
+"use client";
+import React, { FormEvent, useState, ChangeEvent } from "react";
+import { FaGear } from "react-icons/fa6";
+import Link from "next/link";
+import { FaSave, FaTimes } from "react-icons/fa";
+import Image from "next/image";
+
+interface Settings {
+  siteName: string;
+  siteDescription: string;
+  siteLogo: string | null;
+  maintenanceMode: boolean;
+  timezone: string;
+  dateFormat: string;
+  timeFormat: string;
+  emailNotifications: boolean;
+  emailSender: string;
+}
 
 export default function Settings() {
-  const [settings, setSettings] = useState({
-    siteName: 'Nascomsoft',
-    siteDescription: 'IT Solutions and Education Platform',
+  const [settings, setSettings] = useState<Settings>({
+    siteName: "Nascomsoft",
+    siteDescription: "IT Solutions and Education Platform",
     siteLogo: null,
     maintenanceMode: false,
-    timezone: 'UTC',
-    dateFormat: 'YYYY-MM-DD',
-    timeFormat: '24h',
+    timezone: "UTC",
+    dateFormat: "YYYY-MM-DD",
+    timeFormat: "24h",
     emailNotifications: true,
-    emailSender: 'no-reply@nascomsoft.com',
+    emailSender: "no-reply@nascomsoft.com",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e:FormEvent) => {
-    const { name, value, type, checked } = e.target;
-    setSettings(prev => ({
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setSettings((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
-        siteLogo: URL.createObjectURL(file)
+        siteLogo: URL.createObjectURL(file),
       }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     // Simulate API call
     setTimeout(() => {
       console.log(settings);
       setIsSubmitting(false);
-      alert('Settings saved successfully!');
+      alert("Settings saved successfully!");
     }, 1500);
   };
 
@@ -82,11 +98,18 @@ export default function Settings() {
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">General Settings</h2>
-              
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                General Settings
+              </h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label htmlFor="siteName" className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
+                  <label
+                    htmlFor="siteName"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Site Name
+                  </label>
                   <input
                     type="text"
                     id="siteName"
@@ -96,9 +119,14 @@ export default function Settings() {
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="siteDescription" className="block text-sm font-medium text-gray-700 mb-1">Site Description</label>
+                  <label
+                    htmlFor="siteDescription"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Site Description
+                  </label>
                   <input
                     type="text"
                     id="siteDescription"
@@ -111,15 +139,25 @@ export default function Settings() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Site Logo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Site Logo
+                </label>
                 <div className="mt-1 flex items-center">
                   {settings.siteLogo ? (
                     <div className="relative">
-                      <img src={settings.siteLogo} alt="Site Logo" className="h-16 w-auto" />
+                      <Image
+                      width={500}
+                      height={500}
+                        src={settings.siteLogo}
+                        alt="Site Logo"
+                        className="h-16 w-auto"
+                      />
                       <button
                         type="button"
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 -mt-2 -mr-2"
-                        onClick={() => setSettings(prev => ({ ...prev, siteLogo: null }))}
+                        onClick={() =>
+                          setSettings((prev) => ({ ...prev, siteLogo: null }))
+                        }
                       >
                         <FaTimes className="h-3 w-3" />
                       </button>
@@ -127,7 +165,9 @@ export default function Settings() {
                   ) : (
                     <label className="cursor-pointer">
                       <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
-                        <span className="block text-sm text-gray-600">Click to upload logo</span>
+                        <span className="block text-sm text-gray-600">
+                          Click to upload logo
+                        </span>
                         <input
                           type="file"
                           className="hidden"
@@ -142,7 +182,12 @@ export default function Settings() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
-                  <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                  <label
+                    htmlFor="timezone"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Timezone
+                  </label>
                   <select
                     id="timezone"
                     name="timezone"
@@ -156,9 +201,14 @@ export default function Settings() {
                     <option value="CET">Central European Time (CET)</option>
                   </select>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="dateFormat" className="block text-sm font-medium text-gray-700 mb-1">Date Format</label>
+                  <label
+                    htmlFor="dateFormat"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Date Format
+                  </label>
                   <select
                     id="dateFormat"
                     name="dateFormat"
@@ -171,9 +221,14 @@ export default function Settings() {
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                   </select>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="timeFormat" className="block text-sm font-medium text-gray-700 mb-1">Time Format</label>
+                  <label
+                    htmlFor="timeFormat"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Time Format
+                  </label>
                   <select
                     id="timeFormat"
                     name="timeFormat"
@@ -199,15 +254,25 @@ export default function Settings() {
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label htmlFor="maintenanceMode" className="font-medium text-gray-700">Maintenance Mode</label>
-                  <p className="text-gray-500">When enabled, the site will be unavailable to non-admin users.</p>
+                  <label
+                    htmlFor="maintenanceMode"
+                    className="font-medium text-gray-700"
+                  >
+                    Maintenance Mode
+                  </label>
+                  <p className="text-gray-500">
+                    When enabled, the site will be unavailable to non-admin
+                    users.
+                  </p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Email Settings</h2>
-              
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Email Settings
+              </h2>
+
               <div className="flex items-start mb-6">
                 <div className="flex items-center h-5">
                   <input
@@ -220,13 +285,25 @@ export default function Settings() {
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label htmlFor="emailNotifications" className="font-medium text-gray-700">Enable Email Notifications</label>
-                  <p className="text-gray-500">Send email notifications for important system events.</p>
+                  <label
+                    htmlFor="emailNotifications"
+                    className="font-medium text-gray-700"
+                  >
+                    Enable Email Notifications
+                  </label>
+                  <p className="text-gray-500">
+                    Send email notifications for important system events.
+                  </p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <label htmlFor="emailSender" className="block text-sm font-medium text-gray-700 mb-1">Sender Email Address</label>
+                <label
+                  htmlFor="emailSender"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Sender Email Address
+                </label>
                 <input
                   type="email"
                   id="emailSender"
@@ -247,7 +324,7 @@ export default function Settings() {
                 disabled={isSubmitting}
               >
                 <FaSave className="mr-2" />
-                {isSubmitting ? 'Saving...' : 'Save Settings'}
+                {isSubmitting ? "Saving..." : "Save Settings"}
               </button>
             </div>
           </div>

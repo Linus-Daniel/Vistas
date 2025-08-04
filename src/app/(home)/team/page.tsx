@@ -316,7 +316,7 @@ export default function TeamPage() {
             Join Our Growing Team
           </h2>
           <p className="text-xl max-w-3xl mx-auto mb-8">
-            We're always looking for talented individuals to join our mission of
+            We are always looking for talented individuals to join our mission of
             innovation and education
           </p>
           <motion.button

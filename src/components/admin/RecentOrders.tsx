@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 export const RecentOrders = () => (
     <div className="bg-white shadow rounded-lg">
@@ -24,7 +25,7 @@ export const RecentOrders = () => (
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{id}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <img className="h-8 w-8 rounded-full" src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/${avatar}`} alt="avatar" />
+                    <Image width={500} height={500} className="h-8 w-8 rounded-full" src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/${avatar}`} alt="avatar" />
                     <div className="ml-4 text-sm font-medium text-gray-900">{name}</div>
                   </div>
                 </td>

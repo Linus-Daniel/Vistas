@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 
@@ -48,10 +49,12 @@ const Blogs = () => {
               data-aos-delay={100 * (index + 1)}
             >
               <div className="h-48 overflow-hidden">
-                <img
+                <Image
                   className="w-full h-full object-cover"
                   src={blog.image}
                   alt={blog.title}
+                  width={500}
+                  height={500}
                 />
               </div>
               <div className="p-6">
