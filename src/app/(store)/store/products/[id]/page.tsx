@@ -16,9 +16,15 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [mounted, setMounted] = useState(false);
 
   const params = useParams();
   const id = params.id as string;
+
+  // Handle client-side mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -42,8 +48,11 @@ export default function ProductDetailPage() {
       }
     };
 
-    getProduct();
-  }, [id]);
+    // Only fetch if component is mounted (client-side)
+    if (mounted && id) {
+      getProduct();
+    }
+  }, [id, mounted]);
 
   // Reset quantity when product changes
   useEffect(() => {
@@ -112,6 +121,35 @@ export default function ProductDetailPage() {
     },
   };
 
+  // // Handle page reload safely
+  // const handleReload = () => {
+  //   if (typeof window !== "undefined") {
+  //     window.location.reload();
+  //   }
+  // };
+
+  // Don't render until mounted to avoid hydration issues
+  if (!mounted) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+          <Skeleton className="w-full aspect-square rounded-2xl" />
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-4/5" />
+            <Skeleton className="h-8 w-2/5" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="pt-8 space-y-4">
+              <Skeleton className="h-12 w-32" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Error state
   if (error) {
     return (
@@ -130,15 +168,12 @@ export default function ProductDetailPage() {
             </h2>
             <p className="text-red-500 mb-6">{error}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {typeof window !== "undefined" && (
-                <button
-                  onClick={() => window.location.reload()}
-                  className="flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
-                </button>
-              )}
+              <button
+                // onClick={handleReload}                className="flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Try Again
+              </button>
 
               <Link
                 href="/store"
@@ -295,7 +330,27 @@ export default function ProductDetailPage() {
                 <label className="block text-sm font-medium text-gray-700">
                   Quantity
                 </label>
-                
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="w-16 text-center text-lg font-medium">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                    disabled={
+                      product?.stock !== undefined && quantity >= product.stock
+                    }
+                  >
+                    +
+                  </button>
+                </div>
               </motion.div>
 
               {/* Add to Cart Button */}

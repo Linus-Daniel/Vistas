@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useSession } from "next-auth/react";
@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
 
@@ -38,12 +39,27 @@ export default function CheckoutPage() {
   );
   const [selectedCenter, setSelectedCenter] = useState(DELIVERY_CENTERS[0].id);
   const [formData, setFormData] = useState({
-    name: session?.user?.name || "",
-    email: session?.user?.email || "",
+    name: "",
+    email: "",
     address: "",
     city: "",
     zip: "",
   });
+
+  // Handle mounting and session data
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (session?.user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: session.user.name || "",
+        email: session.user.email || "",
+      }));
+    }
+  }, [session]);
 
   // Validation functions
   const validateField = (name: string, value: string) => {
@@ -115,7 +131,6 @@ export default function CheckoutPage() {
     setDeliveryType(type);
     setErrors({}); // Clear errors when switching delivery type
 
-    // Reset address fields if switching to pickup
     if (type === "pickup") {
       setFormData((prev) => ({
         ...prev,
@@ -202,6 +217,38 @@ export default function CheckoutPage() {
     return true;
   };
 
+  const handleContinueShopping = () => {
+    router.push("/store");
+  };
+
+  // Don't render until mounted to avoid hydration issues
+  if (!mounted) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <div className="h-8 bg-gray-200 rounded w-32 mb-6 animate-pulse"></div>
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                <div className="h-10 bg-gray-200 rounded w-full animate-pulse"></div>
+              </div>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="h-6 bg-gray-200 rounded w-40 mb-6 animate-pulse"></div>
+              <div className="space-y-4">
+                <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!session) {
     router.push("/auth?callbackUrl=/checkout");
     return null;
@@ -216,7 +263,7 @@ export default function CheckoutPage() {
             Add some items to your cart before checking out.
           </p>
           <button
-            onClick={() => router.push("/store")}
+            onClick={handleContinueShopping}
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
           >
             Continue Shopping
@@ -493,14 +540,12 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <PaystackButton
+              {/* <PaystackButton
                 email={formData.email}
                 amount={cartTotal}
                 onSuccess={handlePaymentSuccess}
                 onClose={handlePaymentClose}
-                // disabled={isProcessing}
-                // onBeforeInitiate={handlePaymentInitiate}
-              />
+              /> */}
 
               {submitAttempted && Object.keys(errors).length > 0 && (
                 <div className="mt-3 text-sm text-red-600">
