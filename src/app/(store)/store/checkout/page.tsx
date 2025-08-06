@@ -4,7 +4,20 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useSession } from "next-auth/react";
-import PaystackButton from "@/components/store/PaystackButton";
+import dynamic from "next/dynamic";
+
+// Dynamically import PaystackButton with no SSR
+const PaystackButton = dynamic(
+  () => import("@/components/store/PaystackButton"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full bg-gray-200 animate-pulse rounded-md h-12 flex items-center justify-center">
+        <span className="text-gray-500">Loading payment options...</span>
+      </div>
+    ),
+  }
+);
 
 const DELIVERY_CENTERS = [
   {
@@ -31,6 +44,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
 
@@ -49,6 +63,7 @@ export default function CheckoutPage() {
   // Handle mounting and session data
   useEffect(() => {
     setMounted(true);
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
@@ -532,7 +547,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Payment Button */}
+            {/* Payment Button - Only render on client side */}
             <div className="mt-6">
               {isProcessing && (
                 <div className="text-center text-sm text-gray-600 mb-3">
@@ -540,12 +555,14 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* <PaystackButton
-                email={formData.email}
-                amount={cartTotal}
-                onSuccess={handlePaymentSuccess}
-                onClose={handlePaymentClose}
-              /> */}
+              {isClient && (
+                <PaystackButton
+                  email={formData.email}
+                  amount={cartTotal}
+                  onSuccess={handlePaymentSuccess}
+                  onClose={handlePaymentClose}
+                />
+              )}
 
               {submitAttempted && Object.keys(errors).length > 0 && (
                 <div className="mt-3 text-sm text-red-600">
