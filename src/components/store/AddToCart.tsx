@@ -37,7 +37,7 @@ export function AddToCartButton({
     <button
       onClick={handleAddToCart}
       disabled={isAdding || loading}
-      className={`flex items-center w-full justify-center gap-2 bg-black text-white hover:bg-gray-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
+      className={`flex items-center w-full justify-center gap-2 bg-primary-500 text-white hover:bg-primary-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
       aria-label="Add to cart"
     >
       {isAdding || loading ? (

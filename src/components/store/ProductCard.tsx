@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
             </span>
             {product.originalPrice && (
               <span className="text-xs text-gray-500 line-through ml-1">
-                ${product.originalPrice.toFixed(2)}
+                ₦{product.originalPrice.toFixed(2)}
               </span>
             )}
           </div>

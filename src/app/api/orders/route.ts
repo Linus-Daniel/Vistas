@@ -8,7 +8,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import mongoose from "mongoose";
-
+import axios, { Axios } from "axios";
+Axios
 // ==============================
 // 🧾 TYPES
 // ==============================
@@ -50,21 +51,19 @@ async function verifyPaystackPayment(
   reference: string
 ): Promise<PaymentVerification> {
   try {
-    const response = await fetch(
+    const response = await axios.get(
       `https://api.paystack.co/transaction/verify/${reference}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_PAYSTACK_SECRET_KEY}`,
           "Content-Type": "application/json",
         },
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    console.log(response.data)
 
-    const data = await response.json();
+    const data = await response.data;
 
     return {
       success: data.status && data.data.status === "success",
@@ -215,7 +214,7 @@ export async function POST(req: Request) {
       const paymentVerification = await verifyPaystackPayment(paymentId);
       if (!paymentVerification.success) {
         return NextResponse.json(
-          { message: "Payment verification failed" },
+          { message: "Payment verification failed Error:${error}" },
           { status: 400 }
         );
       }

@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": [],  // 👈 This line disables auto-loading @types/*
     "plugins": [
       {
         "name": "next"

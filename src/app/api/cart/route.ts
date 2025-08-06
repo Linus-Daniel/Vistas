@@ -132,6 +132,7 @@ export async function PUT(req: Request) {
     const item = cart.items.find(
       (item: CartItem) => item.product.toString() === productId
     );
+    console.log("The products is ", productId);
     if (!item) {
       return NextResponse.json({ message: "Item not found" }, { status: 404 });
     }
@@ -154,10 +155,6 @@ export async function PUT(req: Request) {
     );
   }
 }
-
-// ==========================
-// ❌ DELETE /api/cart?productId=xxx
-// ==========================
 
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
