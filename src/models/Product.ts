@@ -78,9 +78,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
   }
 );
 
-// Index for better query performance
 ProductSchema.index({ category: 1, inStock: 1 });
-// ProductSchema.index({ sku: 1 });
 ProductSchema.index({ name: "text", description: "text" });
 
 // Virtual for calculating discount percentage
