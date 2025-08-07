@@ -2,6 +2,8 @@ import Categories from "@/components/Categories";
 import ProductCard from "@/components/store/ProductCard";
 import api from "@/lib/axiosInstance";
 import { Product } from "@/types";
+import { getServers } from "dns";
+import { getServerSession } from "next-auth";
 
 const StorePage = async () => {
   try {
@@ -9,6 +11,8 @@ const StorePage = async () => {
 const response = await api.get("/products");
 const products = response.data.products;
 console.log(products.length)
+const session = await getServerSession()
+
 
 
     return (

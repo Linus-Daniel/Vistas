@@ -96,9 +96,9 @@ export default function OrdersPage({orders}:{ orders: IOrder[]}) {
                 </div>
 
                 <div className="p-4">
-                  {order.items.map((item) => (
+                  {order.items.map((item,index) => (
                     <div
-                      key={item.product}
+                      key={index}
                       className="flex py-3 border-b last:border-b-0"
                     >
                       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
