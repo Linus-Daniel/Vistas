@@ -25,13 +25,15 @@ export default function AdminOrders({
   const [itemsPerPage] = useState(10);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
+  console.log("Orders:", orders);
+
   // Filter and search orders
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       const matchesSearch =
         order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.paymentId.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
@@ -197,10 +199,10 @@ export default function AdminOrders({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {order.user.name}
+                        {order.user?.name}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {order.user.email}
+                        {order.user?.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
