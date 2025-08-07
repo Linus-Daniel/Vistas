@@ -6,7 +6,6 @@ import Product from "@/models/Product";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
-import { sendEmail, emailTemplates } from "@/lib/email";
 import mongoose from "mongoose";
 import axios, { Axios } from "axios";
 Axios;
@@ -310,23 +309,23 @@ export async function POST(req: Request) {
       await order.save({ session: mongoSession });
       await Cart.findByIdAndDelete(cart._id, { session: mongoSession });
 
-      setImmediate(async () => {
-        try {
-          const user = await User.findById(session.user.id);
-          if (user?.email) {
-            await sendEmail({
-              to: user.email,
-              subject: `Order Confirmation - #${order._id}`,
-              html: emailTemplates.orderStatusUpdate(
-                order._id.toString(),
-                "processing"
-              ),
-            });
-          }
-        } catch (emailError) {
-          console.error("Email sending error:", emailError);
-        }
-      });
+      // setImmediate(async () => {
+      //   try {
+      //     const user = await User.findById(session.user.id);
+      //     if (user?.email) {
+      //       await sendEmail({
+      //         to: user.email,
+      //         subject: `Order Confirmation - #${order._id}`,
+      //         html: emailTemplates.orderStatusUpdate(
+      //           order._id.toString(),
+      //           "processing"
+      //         ),
+      //       });
+      //     }
+      //   } catch (emailError) {
+      //     console.error("Email sending error:", emailError);
+      //   }
+      // });
 
       return NextResponse.json({
         _id: order._id,

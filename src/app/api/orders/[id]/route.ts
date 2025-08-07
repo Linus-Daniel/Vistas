@@ -5,6 +5,7 @@ import Order from "@/models/Order";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
 import mongoose from "mongoose";
+import { sendOrderStatusEmail } from "../../../../lib/email";
 
 export async function GET(
   req: Request,
@@ -41,9 +42,6 @@ export async function GET(
     return NextResponse.json(order);
   } catch (error) {
     console.error("Error fetching order:", error);
-
- 
-
     return NextResponse.json(
       { message: "Error fetching order details" },
       { status: 500 }
@@ -51,7 +49,6 @@ export async function GET(
   }
 }
 
-// Optional: Add PATCH method for updating order status (admin only)
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -60,11 +57,6 @@ export async function PATCH(
   if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-
-  // Check if user is admin (you'll need to implement this logic)
-  // if (!session.user.isAdmin) {
-  //   return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-  // }
 
   const { id } = await params;
 
@@ -88,7 +80,14 @@ export async function PATCH(
   const { status } = body;
 
   // Validate status
-  const validStatuses = ["processing", "shipped", "delivered", "cancelled"];
+  const validStatuses = [
+    "processing",
+    "shipped",
+    "delivered",
+    "cancelled",
+    "completed",
+    "failed",
+  ];
   if (!status || !validStatuses.includes(status)) {
     return NextResponse.json(
       {
@@ -101,25 +100,56 @@ export async function PATCH(
   await dbConnect();
 
   try {
-    const order = await Order.findByIdAndUpdate(
+    // First get the current order to compare status
+    const currentOrder = await Order.findById(id)
+      .populate("user", "name email")
+      .populate("items.product", "name price");
+
+    if (!currentOrder) {
+      return NextResponse.json({ message: "Order not found" }, { status: 404 });
+    }
+
+    // Check if status is actually changing
+    const isStatusChanging = currentOrder.status !== status;
+
+    // Update the order
+    const updatedOrder = await Order.findByIdAndUpdate(
       id,
       {
         status,
         updatedAt: new Date(),
       },
       { new: true }
-    );
+    )
+      .populate("user", "name email")
+      .populate("items.product", "name price");
 
-    if (!order) {
+    if (!updatedOrder) {
       return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
 
-    // Optional: Send email notification about status change
-    // You could implement this similar to the order creation email
+    // Send email notification if status changed
+    if (isStatusChanging) {
+      try {
+        await sendOrderStatusEmail({
+          order: updatedOrder,
+          previousStatus: currentOrder.status,
+          newStatus: status,
+        });
+        console.log(
+          `Email sent for order ${id} status change: ${currentOrder.status} -> ${status}`
+        );
+      } catch (emailError) {
+        // Log email error but don't fail the request
+        console.error(`Failed to send email for order ${id}:`, emailError);
+        // You might want to add this to a retry queue in production
+      }
+    }
 
     return NextResponse.json({
       message: "Order status updated successfully",
-      order,
+      order: updatedOrder,
+      emailSent: isStatusChanging,
     });
   } catch (error) {
     console.error("Error updating order:", error);

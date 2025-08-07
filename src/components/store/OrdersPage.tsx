@@ -3,10 +3,8 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, CheckCircle, Truck, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
-import api from "@/lib/axiosInstance";
-import { Order } from "@/constant";
 import Image from "next/image";
+import { IOrder } from "@/types";
 
 type USer = {
     name: string;
@@ -16,7 +14,7 @@ type USer = {
 }
 
 
-export default function OrdersPage({orders}:{ orders: Order[]}) {
+export default function OrdersPage({orders}:{ orders: IOrder[]}) {
  
   const router = useRouter();
   const getStatusIcon = (status: string) => {
@@ -100,7 +98,7 @@ export default function OrdersPage({orders}:{ orders: Order[]}) {
                 <div className="p-4">
                   {order.items.map((item) => (
                     <div
-                      key={item.productId}
+                      key={item.product}
                       className="flex py-3 border-b last:border-b-0"
                     >
                       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
