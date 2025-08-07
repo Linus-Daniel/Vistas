@@ -3,7 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import Product from "@/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
-import { emailTemplates, sendEmail } from "@/lib/email";
+// import { emailTemplates, sendEmail } from "@/lib/email";
 import User from "@/models/User";
 
 export async function GET(req: Request) {
@@ -146,26 +146,26 @@ export async function POST(req: Request) {
     const product = await Product.create(productData);
 
     // Check stock level and send alert if low
-    if (product.stock < 10) {
-      try {
-        const admins = await User.find({ role: "admin" });
-        const emailPromises = admins.map((admin) =>
-          sendEmail({
-            to: admin.email,
-            subject: "Low Stock Alert - New Product",
-            html: emailTemplates.lowStockAlert(product.name, product.stock),
-          })
-        );
+    // if (product.stock < 10) {
+    //   try {
+    //     const admins = await User.find({ role: "admin" });
+    //     const emailPromises = admins.map((admin) =>
+    //       sendEmail({
+    //         to: admin.email,
+    //         subject: "Low Stock Alert - New Product",
+    //         html: emailTemplates.lowStockAlert(product.name, product.stock),
+    //       })
+    //     );
 
-        // Don't await email sending to avoid blocking the response
-        Promise.all(emailPromises).catch((emailError) =>
-          console.error("Error sending low stock alert emails:", emailError)
-        );
-      } catch (emailError) {
-        console.error("Error preparing low stock alert emails:", emailError);
-        // Don't fail the product creation if email fails
-      }
-    }
+    //     // Don't await email sending to avoid blocking the response
+    //     Promise.all(emailPromises).catch((emailError) =>
+    //       console.error("Error sending low stock alert emails:", emailError)
+    //     );
+    //   } catch (emailError) {
+    //     console.error("Error preparing low stock alert emails:", emailError);
+    //     // Don't fail the product creation if email fails
+    //   }
+    // }
 
     return NextResponse.json(
       {
