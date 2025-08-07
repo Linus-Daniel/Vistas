@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useSession } from "next-auth/react";
+
 import dynamic from "next/dynamic";
+import { useAuth } from "@/context/AuthContext";
 
 // Dynamically import PaystackButton with no SSR
 const PaystackButton = dynamic(
@@ -45,6 +47,7 @@ export default function CheckoutPage() {
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const {user} = useAuth()
 
   const router = useRouter();
 
@@ -60,6 +63,7 @@ export default function CheckoutPage() {
     zip: "",
   });
 
+  console.log(user)
   // Handle mounting and session data
   useEffect(() => {
     setMounted(true);
@@ -264,10 +268,10 @@ export default function CheckoutPage() {
     );
   }
 
-  if (!session) {
-    router.push("/auth?callbackUrl=/checkout");
-    return null;
-  }
+  // if (!user) {
+  //   router.push("/auth?callbackUrl=/checkout");
+  //   return null;
+  // }
 
   if (!cart || cart.items.length === 0) {
     return (

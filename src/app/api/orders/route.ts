@@ -9,7 +9,7 @@ import { authOptions } from "@/lib/next-auth";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import mongoose from "mongoose";
 import axios, { Axios } from "axios";
-Axios
+Axios;
 // ==============================
 // 🧾 TYPES
 // ==============================
@@ -61,7 +61,7 @@ async function verifyPaystackPayment(
       }
     );
 
-    console.log(response.data)
+    console.log(response.data);
 
     const data = await response.data;
 
@@ -136,18 +136,31 @@ function checkRateLimit(userId: string): boolean {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session) {
+  const user = session?.user
+  if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   await dbConnect();
 
   try {
-    const orders = await Order.find({ user: session.user.id })
+
+    if(user.role !== "admin" && user) {
+
+    
+    const orders = await Order.find({ user: user.id })
       .populate("items.product", "name")
       .sort({ createdAt: -1 });
 
+    return NextResponse.json(orders);}
+
+    // Admin can fetch all orders
+    const orders = await Order.find({})
+      .populate("user", "name email")
+      .populate("items.product", "name price image")
+      .sort({ createdAt: -1 });
     return NextResponse.json(orders);
+    
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import {
   FiUser,
@@ -67,7 +66,8 @@ export default function AuthPage() {
         if (!success) {
           throw new Error("Login failed. Please check your credentials.");
         }
-        router.push("/");
+      
+        router.push("/store");
       } else {
         // Remove empty optional fields before sending
         const payload = {

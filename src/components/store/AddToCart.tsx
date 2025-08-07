@@ -14,13 +14,13 @@ export function AddToCartButton({
   className?: string;
   variant?: "default" | "icon" | "full";
 }) {
-  const { addToCart, loading } = useCart();
+  const { addToCart } = useCart(); // Remove loading from here
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
     try {
-      await addToCart(productId, 1); // Always add 1 quantity
+      await addToCart(productId, 1);
     } finally {
       setIsAdding(false);
     }
@@ -36,11 +36,11 @@ export function AddToCartButton({
   return (
     <button
       onClick={handleAddToCart}
-      disabled={isAdding || loading}
+      disabled={isAdding} // Only use local isAdding state
       className={`flex items-center w-full justify-center gap-2 bg-primary-500 text-white hover:bg-primary-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
       aria-label="Add to cart"
     >
-      {isAdding || loading ? (
+      {isAdding ? ( // Only check local isAdding state
         <Loader2 className="animate-spin h-5 w-5" />
       ) : (
         <>

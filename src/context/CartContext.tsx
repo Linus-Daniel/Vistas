@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "./AuthContext";
 
 
 interface CartItem {
@@ -47,6 +48,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {user} = useAuth()
 
   // Calculate cart count and total
   const cartCount =
@@ -117,7 +119,7 @@ const addToCart = async (productId: string, quantity: number = 1) => {
 
 
   const updateQuantity = async (productId: string, quantity: number) => {
-    if (!session?.user?.id) {
+    if (user) {
       setError("You must be logged in to update cart");
       return;
     }
