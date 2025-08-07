@@ -25,7 +25,7 @@ export default function RenderOrder({
 
     try {
       // Update status via API
-      await api.patch(`/api/orders/${orderId}`, {
+      await api.patch(`/orders/${orderId}`, {
         status: newStatus,
       });
 
