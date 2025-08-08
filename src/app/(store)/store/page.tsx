@@ -1,4 +1,4 @@
-import Categories from "@/components/Categories";
+import Categories from "@/components/store/Categories";
 import ProductCard from "@/components/store/ProductCard";
 import api from "@/lib/axiosInstance";
 import { Product } from "@/types";

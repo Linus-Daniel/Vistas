@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       "storage.googleapis.com",
       "ui-avatars.com",
       "images.unsplash.com",
+      "res.cloudinary.com",
     ],
   },
   eslint: {

@@ -104,7 +104,7 @@ export default function Header() {
                   <div className="flex items-center space-x-2">
                     <div className="relative">
                       <Image
-                        src={user?.image as string}
+                        src={user?.avatar as string}
                         alt={user.name || 'User'}
                         className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover border-2 border-blue-200 group-hover:border-blue-400 transition-colors duration-300"
                         width={32}

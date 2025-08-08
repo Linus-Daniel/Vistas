@@ -212,7 +212,7 @@ export default function Categories({
           return (
             <Link
               key={category.name}
-              href={`/store?category=${encodeURIComponent(category.slug)}`}
+              href={`/store/categories?category=${encodeURIComponent(category.slug)}`}
               className="group block bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all hover:border-blue-200"
             >
               <div className="flex flex-col items-center text-center">

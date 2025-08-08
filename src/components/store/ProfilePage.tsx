@@ -12,7 +12,7 @@ type User = {
     email: string;
     
     phone:string
-    image?: string;
+    avatar?: string;
     role:string
 }
 
@@ -32,11 +32,11 @@ export default function ProfilePage({ user }:{user:User }) {
           <div className="bg-blue-600 p-6 text-white">
             <div className="flex items-center">
               <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-blue-600">
-                {user.image ? (
+                {user.avatar ? (
                   <Image
                     width={500}
                     height={500}
-                    src={user.image}
+                    src={user.avatar}
                     alt={user.name}
                     className="h-full w-full rounded-full object-cover"
                   />
@@ -60,7 +60,10 @@ export default function ProfilePage({ user }:{user:User }) {
             <h2 className="text-xl font-semibold mb-4">Account Details</h2>
 
             <div className="space-y-4">
-              <div className="flex items-center p-4 border rounded-lg">
+              <Link
+                href={"/store/profile/account"}
+                className="flex items-center p-4 border rounded-lg"
+              >
                 <User className="h-5 w-5 text-gray-500 mr-3" />
                 <div>
                   <h3 className="font-medium">Personal Information</h3>
@@ -68,7 +71,7 @@ export default function ProfilePage({ user }:{user:User }) {
                     Update your name and email
                   </p>
                 </div>
-              </div>
+              </Link>
 
               <Link
                 href="/store/orders"
