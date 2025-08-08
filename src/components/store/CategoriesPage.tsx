@@ -82,6 +82,8 @@ export default function CategoriesPage({
     rating: searchParams.get("rating") || "",
   });
 
+  console.log("Initial filters:", filters);
+
   // Debounced search
   const [searchTerm, setSearchTerm] = useState(filters.search);
 
@@ -128,7 +130,7 @@ export default function CategoriesPage({
         params.set("page", page.toString());
         params.set("limit", "20");
 
-        const response = await fetch(`/api/products?${params.toString()}`);
+        const response = await fetch(`/api/search?${params.toString()}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -235,7 +237,7 @@ export default function CategoriesPage({
           </div>
 
           {/* Search Bar */}
-          <div className="relative w-full">
+          <div className="relative  w-full">
             <input
               type="text"
               placeholder="Search products..."

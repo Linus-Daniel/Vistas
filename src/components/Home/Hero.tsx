@@ -31,7 +31,7 @@ const HeroSection = () => {
   return (
     <section
       id="home"
-      className="relative py-24 sm:py-32 lg:py-40 cursor-default overflow-hidden"
+      className="relative py-16 sm:py-24 md:py-32 lg:py-40 cursor-default overflow-hidden"
     >
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
@@ -42,44 +42,41 @@ const HeroSection = () => {
           playsInline
           className="w-full h-full object-cover"
         >
-          <source
-            src="/videos/hero.mp4"
-            type="video/mp4"
-          />
+          <source src="/videos/hero.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute inset-0 bg-black/80"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-12">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-8 md:gap-12">
           {/* Left Content */}
           <motion.div
             initial={{ x: -80, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="w-full lg:w-1/2"
+            className="w-full lg:w-1/2 text-center lg:text-left"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6 text-white">
               Shaping the{" "}
               <span className="text-primary-300">Digital Future</span> Together
             </h1>
-            <p className="text-lg text-gray-200 mb-8 max-w-lg">
+            <p className="text-base sm:text-lg text-gray-200 mb-6 sm:mb-8 max-w-lg mx-auto lg:mx-0">
               We build innovative software solutions, empower through education,
               and create digital experiences that transform businesses.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-primary-600 text-white px-8 py-3 rounded-md font-medium hover:bg-opacity-90 transition">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+              <button className="bg-primary-600 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md font-medium hover:bg-opacity-90 transition text-sm sm:text-base">
                 Explore Services
               </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-md font-medium hover:bg-white hover:text-gray-900 transition">
+              <button className="border-2 border-white text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md font-medium hover:bg-white hover:text-gray-900 transition text-sm sm:text-base">
                 Contact Us
               </button>
             </div>
           </motion.div>
 
-          {/* Right Image Gallery */}
-          <div className="w-full lg:w-1/2 relative h-[400px] hidden md:block">
+          {/* Right Image Gallery - Hidden on mobile */}
+          <div className="w-full lg:w-1/2 relative h-[300px] sm:h-[350px] md:h-[400px] hidden md:block">
             {images.map((image, index) => (
               <motion.div
                 key={index}
