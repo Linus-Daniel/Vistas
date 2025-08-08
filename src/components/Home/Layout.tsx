@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <SessionProvider>
         <AuthProvider>
           <Header />
-          <main>{children}</main>
+          <main  className="w-full">{children}</main>
           <Footer />
         </AuthProvider>
       </SessionProvider>

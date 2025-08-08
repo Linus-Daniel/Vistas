@@ -50,8 +50,8 @@ function Header() {
   };
 
   return (
-    <header className="fixed w-full bg-white shadow-md z-50 cursor-default">
-      <div className="container mx-auto px-4 py-3">
+    <header className="w-full sticky top-0 bg-white shadow-md z-50 cursor-default">
+      <div className="container px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link
