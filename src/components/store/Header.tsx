@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -23,7 +22,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo Section */}
             <Link
-              href="/store"
+              href="/"
               className="flex items-center space-x-3 group transition-all duration-300 ease-out"
             >
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 p-1 group-hover:scale-105 transition-transform duration-300">
@@ -50,8 +49,7 @@ export default function Header() {
             <nav className="hidden lg:flex items-center space-x-8">
               {[
                 { href: "/store", label: "Home" },
-                { href: "/products", label: "Shop" },
-                { href: "/categories", label: "Categories" },
+                { href: "/store/categories", label: "Categories" },
                 { href: "/contact", label: "Contact" },
               ].map((item) => (
                 <Link
