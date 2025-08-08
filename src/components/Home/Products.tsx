@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import api from "@/lib/axiosInstance";
+import { Product } from "@/types";
 
 const products = [
   {
@@ -44,6 +46,27 @@ const products = [
 ];
 
 const StoreSection = () => {
+  const [products,setProducts] = useState<Product[]>([])
+
+  useEffect(()=>{
+
+    const getProducts = async () => {
+      try{
+
+       const response = await api.get("/products")
+       const data = response.data.products;
+       setProducts(data)
+        
+      }
+      catch(error) {
+        console.log(error)
+      }
+    }
+
+    getProducts()
+
+
+  },[])
   return (
     <section id="store" className="py-20 bg-gray-50 cursor-default">
       <div className="container mx-auto px-4">
@@ -63,13 +86,15 @@ const StoreSection = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {products.map((product, index) => (
-            <motion.div
+          {products.slice
+          (0,4).map((product, index) => (
+            <motion.a
               key={index}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: product.delay }}
+              transition={{ duration: 0.6,  }}
               viewport={{ once: true }}
+              href={`/store/${product._id}`}
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300"
             >
               <div className="h-56 overflow-hidden">
@@ -78,11 +103,11 @@ const StoreSection = () => {
                   width={500}
                   height={500}
                   src={product.image}
-                  alt={product.title}
+                  alt={product.name}
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-lg font-bold mb-2">{product.title}</h3>
+                <h3 className="text-lg font-bold mb-2">{product.name}</h3>
                 <p className="text-gray-600 mb-4 text-sm">
                   {product.description}
                 </p>
@@ -95,7 +120,7 @@ const StoreSection = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 
