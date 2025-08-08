@@ -39,6 +39,110 @@ const DELIVERY_CENTERS = [
   },
 ];
 
+const CARPARKS = [
+  {
+    id: "carpark-1",
+    name: "Alaba International Market",
+    state: "Lagos",
+    address: "Alaba International Market, Ojo, Lagos State",
+    price: 1500,
+  },
+  {
+    id: "carpark-2",
+    name: "Onitsha Main Market",
+    state: "Anambra",
+    address: "Onitsha Main Market, Bridge Head, Anambra State",
+    price: 2000,
+  },
+  {
+    id: "carpark-3",
+    name: "Kano Central Motor Park",
+    state: "Kano",
+    address: "Sabon Gari Motor Park, Kano State",
+    price: 2500,
+  },
+  {
+    id: "carpark-4",
+    name: "Ibadan New Garage",
+    state: "Oyo",
+    address: "New Garage Motor Park, Challenge, Ibadan, Oyo State",
+    price: 1800,
+  },
+  {
+    id: "carpark-5",
+    name: "Port Harcourt Mile 1 Market",
+    state: "Rivers",
+    address: "Mile 1 Market, Port Harcourt, Rivers State",
+    price: 2200,
+  },
+  {
+    id: "carpark-6",
+    name: "Kaduna Central Market",
+    state: "Kaduna",
+    address: "Kaduna Central Market, Kaduna State",
+    price: 2300,
+  },
+  {
+    id: "carpark-7",
+    name: "Benin Ring Road Market",
+    state: "Edo",
+    address: "Ring Road Market, Benin City, Edo State",
+    price: 1900,
+  },
+  {
+    id: "carpark-8",
+    name: "Abuja Wuse Market",
+    state: "FCT",
+    address: "Wuse Market, Abuja, Federal Capital Territory",
+    price: 2100,
+  },
+];
+
+const DELIVERY_AGENTS = [
+  {
+    id: "gigl",
+    name: "GIGL (GIG Logistics)",
+    estimatedPrice: 1500,
+    deliveryTime: "2-3 business days",
+    logo: "/logos/gigl-logo.png",
+  },
+  {
+    id: "dhl",
+    name: "DHL Express",
+    estimatedPrice: 3500,
+    deliveryTime: "1-2 business days",
+    logo: "/logos/dhl-logo.png",
+  },
+  {
+    id: "redstar",
+    name: "Red Star Express",
+    estimatedPrice: 2000,
+    deliveryTime: "2-4 business days",
+    logo: "/logos/redstar-logo.png",
+  },
+  {
+    id: "gokada",
+    name: "Gokada",
+    estimatedPrice: 1200,
+    deliveryTime: "Same day (Lagos only)",
+    logo: "/logos/gokada-logo.png",
+  },
+  {
+    id: "kwik",
+    name: "Kwik Delivery",
+    estimatedPrice: 1000,
+    deliveryTime: "Same day (Major cities)",
+    logo: "/logos/kwik-logo.png",
+  },
+  {
+    id: "ups",
+    name: "UPS Nigeria",
+    estimatedPrice: 4000,
+    deliveryTime: "1-3 business days",
+    logo: "/logos/ups-logo.png",
+  },
+];
+
 export default function CheckoutPage() {
   const { data: session } = useSession();
   const { cart, cartTotal, getCart } = useCart();
@@ -51,10 +155,12 @@ export default function CheckoutPage() {
 
   const router = useRouter();
 
-  const [deliveryType, setDeliveryType] = useState<"pickup" | "delivery">(
+  const [deliveryType, setDeliveryType] = useState<"pickup" | "delivery" | "carpark">(
     "delivery"
   );
   const [selectedCenter, setSelectedCenter] = useState(DELIVERY_CENTERS[0].id);
+  const [selectedCarpark, setSelectedCarpark] = useState(CARPARKS[0].id);
+  const [selectedAgent, setSelectedAgent] = useState(DELIVERY_AGENTS[0].id);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -79,6 +185,25 @@ export default function CheckoutPage() {
       }));
     }
   }, [session]);
+
+  // Get selected carpark details
+  const selectedCarparkDetails = CARPARKS.find(cp => cp.id === selectedCarpark);
+  
+  // Get selected delivery agent details
+  const selectedAgentDetails = DELIVERY_AGENTS.find(agent => agent.id === selectedAgent);
+
+  // Calculate total with delivery costs
+  const getDeliveryPrice = () => {
+    if (deliveryType === "carpark" && selectedCarparkDetails) {
+      return selectedCarparkDetails.price;
+    }
+    if (deliveryType === "delivery" && selectedAgentDetails) {
+      return selectedAgentDetails.estimatedPrice;
+    }
+    return 0;
+  };
+
+  const totalWithDelivery = cartTotal + getDeliveryPrice();
 
   // Validation functions
   const validateField = (name: string, value: string) => {
@@ -146,11 +271,11 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleDeliveryTypeChange = (type: "pickup" | "delivery") => {
+  const handleDeliveryTypeChange = (type: "pickup" | "delivery" | "carpark") => {
     setDeliveryType(type);
     setErrors({}); // Clear errors when switching delivery type
 
-    if (type === "pickup") {
+    if (type === "pickup" || type === "carpark") {
       setFormData((prev) => ({
         ...prev,
         address: "",
@@ -169,17 +294,38 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
+      let deliveryInfo;
+      
+      if (deliveryType === "pickup") {
+        deliveryInfo = { centerId: selectedCenter };
+      } else if (deliveryType === "carpark") {
+        const carpark = CARPARKS.find(cp => cp.id === selectedCarpark);
+        deliveryInfo = {
+          carparkId: selectedCarpark,
+          carparkName: carpark?.name,
+          address: carpark?.address,
+          state: carpark?.state,
+          price: carpark?.price,
+        };
+      } else {
+        const agent = DELIVERY_AGENTS.find(ag => ag.id === selectedAgent);
+        deliveryInfo = {
+          agentId: selectedAgent,
+          agentName: agent?.name,
+          deliveryPrice: agent?.estimatedPrice,
+          deliveryTime: agent?.deliveryTime,
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          zip: formData.zip.trim(),
+        };
+      }
+
       const orderData = {
         paymentId: reference.reference,
         deliveryType,
-        deliveryInfo:
-          deliveryType === "pickup"
-            ? { centerId: selectedCenter }
-            : {
-                address: formData.address.trim(),
-                city: formData.city.trim(),
-                zip: formData.zip.trim(),
-              },
+        deliveryInfo,
+        totalAmount: totalWithDelivery,
+        deliveryCost: getDeliveryPrice(),
       };
 
       const res = await fetch("/api/orders", {
@@ -267,11 +413,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // if (!user) {
-  //   router.push("/auth?callbackUrl=/checkout");
-  //   return null;
-  // }
-
   if (!cart || cart.items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -301,33 +442,131 @@ export default function CheckoutPage() {
             {/* Delivery Type Selection */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-3">Delivery Method</h2>
-              <div className="flex space-x-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                 <button
                   type="button"
                   onClick={() => handleDeliveryTypeChange("delivery")}
                   disabled={isProcessing}
-                  className={`px-4 py-2 border rounded-md transition-colors ${
+                  className={`px-3 py-2 border rounded-md transition-colors text-sm ${
                     deliveryType === "delivery"
                       ? "bg-blue-100 border-blue-500 text-blue-700"
                       : "border-gray-300 hover:border-gray-400"
                   } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  Delivery to Address
+                  Home Delivery
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeliveryTypeChange("carpark")}
+                  disabled={isProcessing}
+                  className={`px-3 py-2 border rounded-md transition-colors text-sm ${
+                    deliveryType === "carpark"
+                      ? "bg-blue-100 border-blue-500 text-blue-700"
+                      : "border-gray-300 hover:border-gray-400"
+                  } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  Carpark Delivery
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDeliveryTypeChange("pickup")}
                   disabled={isProcessing}
-                  className={`px-4 py-2 border rounded-md transition-colors ${
+                  className={`px-3 py-2 border rounded-md transition-colors text-sm ${
                     deliveryType === "pickup"
                       ? "bg-blue-100 border-blue-500 text-blue-700"
                       : "border-gray-300 hover:border-gray-400"
                   } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  Pick Up In Store
+                  Store Pickup
                 </button>
               </div>
 
+              {/* Delivery Agent Selection */}
+              {deliveryType === "delivery" && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Select Delivery Agent *
+                  </label>
+                  <div className="space-y-2">
+                    {DELIVERY_AGENTS.map((agent) => (
+                      <div
+                        key={agent.id}
+                        className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                          selectedAgent === agent.id
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => setSelectedAgent(agent.id)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="radio"
+                              name="deliveryAgent"
+                              value={agent.id}
+                              checked={selectedAgent === agent.id}
+                              onChange={() => setSelectedAgent(agent.id)}
+                              className="text-blue-600"
+                            />
+                            <div>
+                              <h4 className="font-medium text-sm">{agent.name}</h4>
+                              <p className="text-xs text-gray-500">{agent.deliveryTime}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium text-sm">₦{agent.estimatedPrice.toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Carpark Selection */}
+              {deliveryType === "carpark" && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Select Carpark Location *
+                  </label>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {CARPARKS.map((carpark) => (
+                      <div
+                        key={carpark.id}
+                        className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                          selectedCarpark === carpark.id
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => setSelectedCarpark(carpark.id)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="radio"
+                              name="carpark"
+                              value={carpark.id}
+                              checked={selectedCarpark === carpark.id}
+                              onChange={() => setSelectedCarpark(carpark.id)}
+                              className="text-blue-600"
+                            />
+                            <div>
+                              <h4 className="font-medium text-sm">{carpark.name}</h4>
+                              <p className="text-xs text-gray-600">{carpark.state} State</p>
+                              <p className="text-xs text-gray-500">{carpark.address}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium text-sm">₦{carpark.price.toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Store Pickup Selection */}
               {deliveryType === "pickup" && (
                 <div className="mt-4">
                   <label
@@ -406,7 +645,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Shipping Address Form (only shown for delivery) */}
+            {/* Shipping Address Form (only shown for home delivery) */}
             {deliveryType === "delivery" && (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Delivery Address</h3>
@@ -513,11 +752,61 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <p className="font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₦{(item.price * item.quantity).toLocaleString()}
                   </p>
                 </div>
               ))}
             </div>
+
+            {/* Delivery Method Summary */}
+            <div className="mb-4 p-4 bg-white rounded-md border">
+              <h3 className="font-medium mb-2">Delivery Method</h3>
+              {deliveryType === "pickup" ? (
+                <div>
+                  <p className="text-sm font-medium">Store Pickup</p>
+                  <p className="text-sm text-gray-600">
+                    {
+                      DELIVERY_CENTERS.find((c) => c.id === selectedCenter)
+                        ?.name
+                    }
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {
+                      DELIVERY_CENTERS.find((c) => c.id === selectedCenter)
+                        ?.address
+                    }
+                  </p>
+                  <p className="text-sm font-medium text-green-600 mt-1">Free</p>
+                </div>
+              ) : deliveryType === "carpark" ? (
+                <div>
+                  <p className="text-sm font-medium">Carpark Delivery</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedCarparkDetails?.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {selectedCarparkDetails?.address}
+                  </p>
+                  <p className="text-sm font-medium text-blue-600 mt-1">
+                    ₦{selectedCarparkDetails?.price.toLocaleString()}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-medium">Home Delivery</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedAgentDetails?.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {selectedAgentDetails?.deliveryTime}
+                  </p>
+                  <p className="text-sm font-medium text-blue-600 mt-1">
+                    ₦{selectedAgentDetails?.estimatedPrice.toLocaleString()}
+                  </p>
+                </div>
+              )}
+            </div>
+
 
             {/* Delivery Method Summary */}
             <div className="mb-4 p-4 bg-white rounded-md border">
