@@ -115,12 +115,12 @@ export default function BottomNav() {
                 return "text-gray-500 hover:text-gray-700 hover:bg-white/60";
               };
 
-              // Enhanced rounded styling for search
-              const getElevatedStyles = () => {
+              // Search button styling
+              const getSearchStyles = () => {
                 if (isElevated) {
                   return isActive
-                    ? "bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-xl shadow-indigo-300/50"
-                    : "bg-gradient-to-br from-indigo-400 to-blue-500 text-white shadow-lg shadow-indigo-300/40 hover:scale-105";
+                    ? "bg-gradient-to-br from-indigo-500 to-blue-600 text-white"
+                    : "bg-gradient-to-br from-indigo-400 to-blue-500 text-white hover:from-indigo-500 hover:to-blue-600";
                 }
                 return "";
               };
@@ -135,7 +135,7 @@ export default function BottomNav() {
                   transition-all duration-500 ease-out group
                   ${
                     isElevated
-                      ? `${getElevatedStyles()} border-2 border-white/30`
+                      ? `${getSearchStyles()}`
                       : isActive
                       ? `${getItemColors()} scale-105 shadow-lg animate-pulse`
                       : `${getItemColors()} hover:scale-102 hover:shadow-md`
@@ -154,14 +154,12 @@ export default function BottomNav() {
                       ? "transform -translate-y-0.5"
                       : "group-hover:scale-110"
                   }
-                  ${isElevated ? "p-1" : ""}
                 `}
                     >
                       <Icon
                         className={`
                     h-6 w-6 transition-all duration-300 ease-out
                     ${isActive ? "scale-110" : ""}
-                    ${isElevated ? "h-7 w-7" : ""}
                   `}
                       />
 
@@ -184,20 +182,7 @@ export default function BottomNav() {
                       )}
 
                       {/* Elevated search icon special effects */}
-                      {isElevated && (
-                        <>
-                          {/* Floating ring effect */}
-                          <div
-                            className={`
-                        absolute inset-0 rounded-full border-2 border-white/40 
-                        animate-ping opacity-20
-                        ${isActive ? "border-white/60" : ""}
-                      `}
-                          />
-                          {/* Inner glow */}
-                          <div className="absolute inset-0 bg-white/10 rounded-full blur-sm" />
-                        </>
-                      )}
+                      {isElevated && <>{/* Remove all special effects */}</>}
                     </div>
 
                     {/* Label with fade and slide animation */}
@@ -206,7 +191,7 @@ export default function BottomNav() {
                   text-xs mt-1 font-medium transition-all duration-300 ease-out
                   ${
                     isElevated
-                      ? "text-white font-semibold"
+                      ? "text-white"
                       : isActive
                       ? "opacity-100 transform translate-y-0"
                       : "opacity-70 transform translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0"
@@ -257,7 +242,7 @@ export default function BottomNav() {
 
                     {/* Special elevated active indicator */}
                     {isActive && isElevated && (
-                      <div className="absolute -bottom-2 w-3 h-3 bg-white rounded-full animate-pulse shadow-lg" />
+                      <div className="absolute -bottom-1 w-2 h-2 bg-white rounded-full animate-pulse shadow-lg" />
                     )}
                   </Link>
                 </li>
